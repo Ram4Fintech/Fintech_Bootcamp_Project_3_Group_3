@@ -4,6 +4,7 @@ from web3 import Web3
 from pathlib import Path
 from dotenv import load_dotenv
 import streamlit as st
+from SIR_Pinata import pin_file_to_ipfs, pin_json_to_ipfs, convert_data_to_json
 
 load_dotenv()
 
@@ -22,7 +23,7 @@ w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
 def load_contract():
 
     # Load SIR_NFT Gallery ABI
-    with open(Path('/FileName.json')) as f:
+    with open(Path('/Users/shayan/Desktop/USYD_FinTech_Bootcamp_2023_Material/Project_3/Contracts/Compiled/SIR_NFT_abi.json')) as f:
         certificate_abi = json.load(f)
 
 
@@ -44,32 +45,66 @@ def load_contract():
 contract = load_contract()
 
 #################################################################################
-# Register New Artwork
+# Register New Artwork with Pre-Existing URI
 #################################################################################
-st.title("Register New Artwork")
+# st.title("Register New Artwork")
+# accounts = w3.eth.accounts
+
+# # Use a Streamlit component to get the address of the artwork owner from the user
+# address = st.selectbox("Select Artwork Owner", options=accounts)
+
+# # Use a Streamlit component to get the artwork's URI
+# artwork_uri = st.text_input("The URI of the artwork")
+
+# if st.button("Register Artwork"):
+
+#     # Use the contract to send a transaction to the registerArtwork function
+#     tx_hash = contract.functions.registerArtwork(
+#         address,
+#         artwork_uri
+#     ).transact({'from': address, 'gas': 1000000})
+#     receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+#     st.write("Transaction receipt mined:")
+#     st.write(dict(receipt))
+
+# st.markdown("---")
+
+################################################################################
+# Helper functions to pin files and json to Pinata
+################################################################################
+
+
+def pin_artwork(artwork_name, artwork_file):
+    # Pin the file to IPFS with Pinata
+    ipfs_file_hash = pin_file_to_ipfs(artwork_file.getvalue())
+
+    # Build a token metadata file for the artwork
+    token_json = {
+        "name": artwork_name,
+        "image": ipfs_file_hash
+    }
+    json_data = convert_data_to_json(token_json)
+
+    # Pin the json to IPFS with Pinata
+    json_ipfs_hash = pin_json_to_ipfs(json_data)
+
+    return json_ipfs_hash, token_json
+
+
+def pin_appraisal_report(report_content):
+    json_report = convert_data_to_json(report_content)
+    report_ipfs_hash = pin_json_to_ipfs(json_report)
+    return report_ipfs_hash
+
+
+st.title("Art Registry Appraisal System")
+st.write("Choose an account to get started")
 accounts = w3.eth.accounts
-
-# Use a Streamlit component to get the address of the artwork owner from the user
-address = st.selectbox("Select Artwork Owner", options=accounts)
-
-# Use a Streamlit component to get the artwork's URI
-artwork_uri = st.text_input("The URI of the artwork")
-
-if st.button("Register Artwork"):
-
-    # Use the contract to send a transaction to the registerArtwork function
-    tx_hash = contract.functions.registerArtwork(
-        address,
-        artwork_uri
-    ).transact({'from': address, 'gas': 1000000})
-    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-    st.write("Transaction receipt mined:")
-    st.write(dict(receipt))
-
+address = st.selectbox("Select Account", options=accounts)
 st.markdown("---")
 
 ################################################################################
-# Register New Artwork
+# Register New Artwork using Pinata IPFS
 ################################################################################
 st.markdown("## Register New Artwork")
 artwork_name = st.text_input("Enter the name of the artwork")
@@ -93,7 +128,7 @@ if st.button("Register Artwork"):
         artwork_uri,
         token_json['image']
     ).transact({'from': address, 'gas': 1000000})
-    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
     st.write("Transaction receipt mined:")
     st.write(dict(receipt))
     st.write("You can view the pinned metadata file with the following IPFS Gateway Link")
@@ -130,7 +165,7 @@ if st.button("Appraise Artwork"):
         image_uri
 
     ).transact({"from": w3.eth.accounts[0]})
-    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
     st.write(receipt)
 st.markdown("---")
 
@@ -140,7 +175,7 @@ st.markdown("---")
 st.markdown("## Get the appraisal report history")
 art_token_id = st.number_input("Artwork ID", value=0, step=1)
 if st.button("Get Appraisal Reports"):
-    appraisal_filter = contract.events.Appraisal.createFilter(
+    appraisal_filter = contract.events.Appraisal.create_filter(
         fromBlock=0, argument_filters={"tokenId": art_token_id}
     )
     reports = appraisal_filter.get_all_entries()
@@ -164,96 +199,3 @@ if st.button("Get Appraisal Reports"):
             st.image(f'https://ipfs.io/ipfs/{image_uri}')
     else:
         st.write("This artwork has no new appraisals")
-
-#################################################################################
-#####################################ARCHIVE#####################################
-#################################################################################
-
-################################################################################
-# Helper functions to pin files and json to Pinata
-################################################################################
-
-
-def pin_artwork(artwork_name, artwork_file):
-    # Pin the file to IPFS with Pinata
-    ipfs_file_hash = pin_file_to_ipfs(artwork_file.getvalue())
-
-    # Build a token metadata file for the artwork
-    token_json = {
-        "name": artwork_name,
-        "image": ipfs_file_hash
-    }
-    json_data = convert_data_to_json(token_json)
-
-    # Pin the json to IPFS with Pinata
-    json_ipfs_hash = pin_json_to_ipfs(json_data)
-
-    return json_ipfs_hash, token_json
-
-
-def pin_appraisal_report(report_content):
-    json_report = convert_data_to_json(report_content)
-    report_ipfs_hash = pin_json_to_ipfs(json_report)
-    return report_ipfs_hash
-
-
-st.title("Art Registry Appraisal System")
-st.write("Choose an account to get started")
-accounts = w3.eth.accounts
-address = st.selectbox("Select Account", options=accounts)
-st.markdown("---")
-
-
-#################################################################################
-# Display a Token
-#################################################################################
-st.markdown("## Check Balance of an Account")
-
-selected_address = st.selectbox("Select Account", options=accounts)
-
-tokens = contract.functions.balanceOf(selected_address).call()
-
-st.write(f"This address owns {tokens} tokens")
-
-st.markdown("## Check  Ownership and Display Token")
-
-total_token_supply = contract.functions.totalSupply().call()
-
-token_id = st.selectbox("Artwork Tokens", list(range(total_token_supply)))
-
-if st.button("Display"):
-
-    # Get the art token owner
-    owner = contract.functions.ownerOf(token_id).call()
-    
-    st.write(f"The token is registered to {owner}")
-
-    # Get the art token's URI
-    token_uri = contract.functions.tokenURI(token_id).call()
-
-    st.write(f"The tokenURI is {token_uri}")
-    st.image(token_uri)
-
-################################################################################
-# Award Certificate
-################################################################################
-
-accounts = w3.eth.accounts
-account = accounts[0]
-student_account = st.selectbox("Select Account", options=accounts)
-certificate_details = st.text_input("Certificate Details", value="FinTech Certificate of Completion")
-if st.button("Award Certificate"):
-    contract.functions.awardCertificate(student_account, certificate_details).transact({'from': account, 'gas': 1000000})
-
-################################################################################
-# Display Certificate
-################################################################################
-certificate_id = st.number_input("Enter a Certificate Token ID to display", value=0, step=1)
-if st.button("Display Certificate"):
-    # Get the certificate owner
-    certificate_owner = contract.functions.ownerOf(certificate_id).call()
-    st.write(f"The certificate was awarded to {certificate_owner}")
-
-    # Get the certificate's metadata
-    token_uri = contract.functions.tokenURI(certificate_id).call()
-    st.write(f"The certificate's tokenURI metadata is {token_uri}")
