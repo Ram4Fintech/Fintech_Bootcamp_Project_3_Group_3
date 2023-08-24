@@ -117,6 +117,7 @@ file = st.file_uploader("Upload Artwork", type=["jpg", "jpeg", "png"])
 #nft_images = ##[Path('/Users/shayan/Desktop/USYD_FinTech_Bootcamp_2023_Material/Project_3/Contracts/Compiled/SIR_NFT_abi.json')]
 #file = st.selectbox("Upload Artwork", options=nft_images, type=["jpg", "jpeg", "png"])
 
+
 if st.button("Register Artwork"):
     # Use the `pin_artwork` helper function to pin the file to IPFS
     artwork_ipfs_hash, token_json = pin_artwork(artwork_name, file)
