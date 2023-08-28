@@ -23,6 +23,7 @@ w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
 def load_contract():
 
     # Load SIR_NFT Gallery ABI
+    ### Update file path as needed
     with open(Path('/Users/shayan/Desktop/USYD_FinTech_Bootcamp_2023_Material/Project_3/Contracts/Compiled/SIR_NFT_abi.json')) as f:
         certificate_abi = json.load(f)
 
@@ -45,7 +46,7 @@ def load_contract():
 contract = load_contract()
 
 #################################################################################
-# Register New Artwork with Pre-Existing URI
+# BACKUP: Register New Artwork with Pre-Existing URI
 #################################################################################
 # st.title("Register New Artwork")
 # accounts = w3.eth.accounts
@@ -111,12 +112,13 @@ artwork_name = st.text_input("Enter the name of the artwork")
 artist_name = st.text_input("Enter the artist name")
 initial_appraisal_value = st.text_input("Enter the initial appraisal amount")
 
-# Use the Streamlit `file_uploader` function create the list of digital image file types(jpg, jpeg, or png) that will be uploaded to Pinata.
-file = st.file_uploader("Upload Artwork", type=["jpg", "jpeg", "png"])
+# Use the Streamlit `file_uploader` function to create the list of digital image file types(jpg, jpeg, or png) that will be uploaded to Pinata.
+#file = st.file_uploader("Upload Artwork", type=["jpg", "jpeg", "png"])
 
-#nft_images = ##[Path('/Users/shayan/Desktop/USYD_FinTech_Bootcamp_2023_Material/Project_3/Contracts/Compiled/SIR_NFT_abi.json')]
-#file = st.selectbox("Upload Artwork", options=nft_images, type=["jpg", "jpeg", "png"])
-
+# Use the Streamlit `selectbox` function to brows the list of digital images that will be uploaded to Pinata. 
+### Update folder path as needed
+nft_images = Path('/Users/shayan/Downloads').glob('*.png')
+file = st.selectbox("Upload Artwork", options=nft_images)
 
 if st.button("Register Artwork"):
     # Use the `pin_artwork` helper function to pin the file to IPFS
