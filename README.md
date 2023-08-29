@@ -57,7 +57,7 @@ Our project revolves around creating a fintech solution that combines the power 
 - Streamlit User Interface: <br>
   - Execute the Streamlit script: <i>streamlit run your_script_name.py</i>
 
-![Smart Contract Video Demonstration](Evidence/Project_3_Group_3_Smart_Contract_Streamlit_Demo.mov)
+*Please review the Smart Contract Video Demonstration in the evidence folder for more information*
   
 <br>
 
