@@ -6,7 +6,26 @@
 
 ---
 ## Overview
-Our project revolves around creating a fintech solution that combines the power of Generative Adversarial Networks (GANs) with the Ethereum blockchain to generate and mint unique art pieces as non-fungible tokens (NFTs). Using TensorFlow for training a Wasserstein GAN (WGAN) on the CelebA dataset, our project then proceeds to mint the generated images as NFTs using Solidity smart contracts. Our project also integrates with IPFS for decentralised storage and Streamlit for a user-friendly minting platform.<br>
+Our project revolves around creating a fintech solution that combines the power of Generative Adversarial Networks (GANs) with the Ethereum blockchain to generate and mint unique art pieces as non-fungible tokens (NFTs). Using TensorFlow for training a Wasserstein GAN (WGAN) on the Dmlab dataset, our project then proceeds to mint the generated images as NFTs using Solidity smart contracts. Our project also integrates with IPFS for decentralised storage and Streamlit for a user-friendly minting platform.<br>
+
+## WGAN Model Insights:
+
+Why WGAN?: We chose this model due to its improved stability in training and capability to overcome common problems such as mode collapse, experienced in traditional GANs. <br>
+
+#### Dataset: 
+- The model was trained on the Dmlab dataset fetched from TensorFlow datasets.<br>
+
+#### Model Architecture:
+- Generator: Uses Conv2DTranspose layers to upscale a noise vector into a 256x256 image.<br>
+- Discriminator: Uses Conv2D layers to classify a 256x256 image as real or fake.<br>
+
+#### Training Specifics:
+- The model was trained with a batch size of 8.<br>
+- Wasserstein loss was utilised to ensure stable training.<br>
+- Optimizers with specific learning rates and betas were used.<br>
+- A training ratio of 5 (number of discriminator updates per generator update) was maintained to balance the training.<br>
+
+<br>
 
 ## Prerequisites
 - Python 3.x<br>
@@ -27,6 +46,7 @@ Our project revolves around creating a fintech solution that combines the power 
 - Pinata IPFS Setup:
   - Ensure Pinata account is setup and have keys available for pasting into ".env" file
 
+<br>
 
 ## Libraries and Dependencies
 **Remix:**
@@ -42,7 +62,7 @@ Our project revolves around creating a fintech solution that combines the power 
 ## Usage
 - Training the WGAN Model  <br>
   - Use Google Colab or a local machine with sufficient computational resources.
-  - Load the CelebA dataset and preprocess the images.
+  - Load the Dmlab dataset and preprocess the images.
   - Train the model using the provided code.
   - Adjust the batch size and epochs based on your computational capabilities. 
   
@@ -61,8 +81,13 @@ Our project revolves around creating a fintech solution that combines the power 
   
 <br>
 
+## Our Generated Image:
+![image_at_epoch_2500_sample_7](https://github.com/Ram4Fintech/Fintech_Bootcamp_Project_3_Group_3/assets/127584188/03ab2425-a764-4e77-842f-0d3b8100020c)
+
+<br>
+
 ## Project Structure:
-- WGAN Model: Trains on CelebA, producing unique art.
+- WGAN Model: Trains on Dmlab, producing unique art.
 - Solidity Contract: Facilitates the minting process on a Ganache based Ethereum Blockchain for testing
 - Streamlit UI: Interactive platform for minting.
 
