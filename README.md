@@ -1,7 +1,5 @@
 <h1> SIR: A Decentralised Artwork Minting Platform </h1>
 
-*Group 3: Shayan, Isabel, Ram*
-
 *The machine learning portion of this project was developed in Google Colab to leverage its powerful GPU capabilities. The remainder of the code was written in VS Code using Python, and Remix was utilised for the Solidity components.*
 
 ---
